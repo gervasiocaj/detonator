@@ -9,9 +9,12 @@ import org.jgap.gp.impl.GPConfiguration;
 import org.jgap.gp.impl.GPGenotype;
 import org.jgap.gp.terminal.Terminal;
 
-import br.ufcg.edu.Detonator.command.AheadTerminal;
-import br.ufcg.edu.Detonator.command.BackTerminal;
-import br.ufcg.edu.Detonator.command.FireTerminal;
+import br.ufcg.edu.Detonator.command.AheadCommand;
+import br.ufcg.edu.Detonator.command.BackCommand;
+import br.ufcg.edu.Detonator.command.FireCommand;
+import br.ufcg.edu.Detonator.command.MyAdd;
+import br.ufcg.edu.Detonator.command.MyMultiply;
+import br.ufcg.edu.Detonator.command.MySubProgram;
 
 public class App extends GPProblem {
 	
@@ -61,9 +64,9 @@ public class App extends GPProblem {
             	
             	new MyAdd(config),
                 new MyMultiply(config),
-                new FireTerminal(config),
-                new AheadTerminal(config),
-                new BackTerminal(config),
+                new FireCommand(config),
+                new AheadCommand(config),
+                new BackCommand(config),
             },
             {
             	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
@@ -71,9 +74,9 @@ public class App extends GPProblem {
             	
             	new MyAdd(config),
                 new MyMultiply(config),
-                new FireTerminal(config),
-                new AheadTerminal(config),
-                new BackTerminal(config),
+                new FireCommand(config),
+                new AheadCommand(config),
+                new BackCommand(config),
             },
             {
             	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
@@ -81,9 +84,9 @@ public class App extends GPProblem {
             	
             	new MyAdd(config),
                 new MyMultiply(config),
-                new FireTerminal(config),
-                new AheadTerminal(config),
-                new BackTerminal(config),
+                new FireCommand(config),
+                new AheadCommand(config),
+                new BackCommand(config),
             },
             {
             	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
@@ -91,9 +94,9 @@ public class App extends GPProblem {
             	
             	new MyAdd(config),
                 new MyMultiply(config),
-                new FireTerminal(config),
-                new AheadTerminal(config),
-                new BackTerminal(config),
+                new FireCommand(config),
+                new AheadCommand(config),
+                new BackCommand(config),
             }
         };
 

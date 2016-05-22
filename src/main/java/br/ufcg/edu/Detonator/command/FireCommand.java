@@ -6,10 +6,10 @@ import org.jgap.gp.IGPProgram;
 import org.jgap.gp.impl.GPConfiguration;
 import org.jgap.gp.impl.ProgramChromosome;
 
-public class AheadTerminal extends CommandGene {
+public class FireCommand extends CommandGene {
 
-	public AheadTerminal(GPConfiguration a_conf) throws InvalidConfigurationException {
-		super(a_conf, 1, VoidClass);
+	public FireCommand(GPConfiguration a_conf) throws InvalidConfigurationException {
+		super(a_conf, 1, Void.class);
 	}
 	
 	@Override
@@ -19,11 +19,12 @@ public class AheadTerminal extends CommandGene {
 	
 	@Override
 	public Object execute_object(ProgramChromosome c, int n, Object[] args) {
-		return "ahead(" + c.execute_object(n, 0, args) + ");";
+		return "fire(" + c.execute_object(n, 0, args) + ");";
 	}
-
+	
 	@Override
 	public String toString() {
-		return "ahead(&1);";
+		return "fire(&1);";
 	}
+
 }

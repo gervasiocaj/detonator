@@ -1,4 +1,4 @@
-package br.ufcg.edu.Detonator;
+package br.ufcg.edu.Detonator.command;
 
 import org.jgap.InvalidConfigurationException;
 import org.jgap.gp.CommandGene;
