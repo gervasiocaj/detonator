@@ -4,15 +4,14 @@ import org.apache.log4j.BasicConfigurator;
 import org.jgap.InvalidConfigurationException;
 import org.jgap.gp.CommandGene;
 import org.jgap.gp.GPProblem;
-import org.jgap.gp.function.Add;
-import org.jgap.gp.function.Multiply;
-import org.jgap.gp.impl.DeltaGPFitnessEvaluator;
+import org.jgap.gp.impl.DefaultGPFitnessEvaluator;
 import org.jgap.gp.impl.GPConfiguration;
 import org.jgap.gp.impl.GPGenotype;
 import org.jgap.gp.terminal.Terminal;
-import org.jgap.gp.terminal.Variable;
 
-import br.ufcg.edu.Detonator.command.Fire;
+import br.ufcg.edu.Detonator.command.AheadTerminal;
+import br.ufcg.edu.Detonator.command.BackTerminal;
+import br.ufcg.edu.Detonator.command.FireTerminal;
 
 public class App extends GPProblem {
 	
@@ -21,12 +20,11 @@ public class App extends GPProblem {
 
         GPConfiguration config = getGPConfiguration();
 
-        config.setGPFitnessEvaluator(new DeltaGPFitnessEvaluator());
-        config.setMaxInitDepth(4);
+        config.setGPFitnessEvaluator(new DefaultGPFitnessEvaluator());
+        config.setMaxInitDepth(6);
         config.setPopulationSize(10);
-        config.setMaxCrossoverDepth(8);
+        config.setMaxCrossoverDepth(6);
         config.setFitnessFunction(new MyFitnessFunction());
-        //config.setStrictProgramCreation(true);
     }
 
     @Override
@@ -38,51 +36,64 @@ public class App extends GPProblem {
         		CommandGene.VoidClass,
         		CommandGene.VoidClass,
         		CommandGene.VoidClass,
-        		};
+		};
 
         Class[][] argTypes = {
         		{},
         		{},
         		{},
         		{},
-        		};
+		};
 
         CommandGene[][] nodeSets = {
             {
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-                new Add(config, CommandGene.DoubleClass),
-                new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+            	new MySubProgram(config, 2),
+            	new MySubProgram(config, 3),
+            	new MySubProgram(config, 4),
+            	new MySubProgram(config, 5),
+
+            	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
+            	new Terminal(config, CommandGene.DoubleClass, 1d, 2d),
+            	
+            	// dimensions of the screen, mostly for ahead and back methods 
+            	//new Terminal(config, CommandGene.DoubleClass, 0d, 800d),
+            	//new Terminal(config, CommandGene.DoubleClass, 0d, 600d),
+            	
+            	new MyAdd(config),
+                new MyMultiply(config),
+                new FireTerminal(config),
+                new AheadTerminal(config),
+                new BackTerminal(config),
             },
             {
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-                new Add(config, CommandGene.DoubleClass),
-                new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+            	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
+            	new Terminal(config, CommandGene.DoubleClass, 1d, 2d),
+            	
+            	new MyAdd(config),
+                new MyMultiply(config),
+                new FireTerminal(config),
+                new AheadTerminal(config),
+                new BackTerminal(config),
             },
             {
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-                new Add(config, CommandGene.DoubleClass),
-                new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+            	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
+            	new Terminal(config, CommandGene.DoubleClass, 1d, 2d),
+            	
+            	new MyAdd(config),
+                new MyMultiply(config),
+                new FireTerminal(config),
+                new AheadTerminal(config),
+                new BackTerminal(config),
             },
             {
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-                new Add(config, CommandGene.DoubleClass),
-                new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+            	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
+            	new Terminal(config, CommandGene.DoubleClass, 1d, 2d),
+            	
+            	new MyAdd(config),
+                new MyMultiply(config),
+                new FireTerminal(config),
+                new AheadTerminal(config),
+                new BackTerminal(config),
             }
         };
 
@@ -98,9 +109,10 @@ public class App extends GPProblem {
         BasicConfigurator.configure();
         
         GPGenotype gp = problem.create();
-        gp.setVerboseOutput(true);
-        gp.evolve(30);
+        gp.setVerboseOutput(false);
+        gp.evolve(20);
 
         gp.outputSolution(gp.getAllTimeBest());
+        MyFitnessFunction.createRobotFromChromossome(gp.getAllTimeBest());
     }
 }

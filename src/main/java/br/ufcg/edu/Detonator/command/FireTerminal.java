@@ -6,17 +6,20 @@ import org.jgap.gp.IGPProgram;
 import org.jgap.gp.impl.GPConfiguration;
 import org.jgap.gp.impl.ProgramChromosome;
 
-public class Fire extends CommandGene {
+public class FireTerminal extends CommandGene {
 
-	private static final long serialVersionUID = -3534898622029777249L;
-	
-	public Fire(GPConfiguration a_conf) throws InvalidConfigurationException {
+	public FireTerminal(GPConfiguration a_conf) throws InvalidConfigurationException {
 		super(a_conf, 1, Void.class);
 	}
 	
 	@Override
 	public Class getChildType(IGPProgram a_ind, int a_chromNum) {
 		return DoubleClass;
+	}
+	
+	@Override
+	public Object execute_object(ProgramChromosome c, int n, Object[] args) {
+		return "fire(" + c.execute_object(n, 0, args) + ");";
 	}
 	
 	@Override
