@@ -6,11 +6,11 @@ import org.jgap.gp.IGPProgram;
 import org.jgap.gp.impl.GPConfiguration;
 import org.jgap.gp.impl.ProgramChromosome;
 
-public class Fire extends CommandGene {
+public class FireTerminal extends CommandGene {
 
 	private static final long serialVersionUID = -3534898622029777249L;
 	
-	public Fire(GPConfiguration a_conf) throws InvalidConfigurationException {
+	public FireTerminal(GPConfiguration a_conf) throws InvalidConfigurationException {
 		super(a_conf, 1, Void.class);
 	}
 	

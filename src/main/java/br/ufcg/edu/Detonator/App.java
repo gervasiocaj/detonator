@@ -12,7 +12,7 @@ import org.jgap.gp.impl.GPGenotype;
 import org.jgap.gp.terminal.Terminal;
 import org.jgap.gp.terminal.Variable;
 
-import br.ufcg.edu.Detonator.command.Fire;
+import br.ufcg.edu.Detonator.command.FireTerminal;
 
 public class App extends GPProblem {
 	
@@ -38,24 +38,22 @@ public class App extends GPProblem {
         		CommandGene.VoidClass,
         		CommandGene.VoidClass,
         		CommandGene.VoidClass,
-        		};
+		};
 
         Class[][] argTypes = {
         		{},
         		{},
         		{},
         		{},
-        		};
+		};
 
         CommandGene[][] nodeSets = {
             {
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
-            	new Terminal(config, CommandGene.DoubleClass),
+            	new Terminal(config, CommandGene.DoubleClass, 0d, 1d),
+            	new Terminal(config, CommandGene.DoubleClass, 1d, 2d),
                 new Add(config, CommandGene.DoubleClass),
                 new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+                new FireTerminal(config),
             },
             {
             	new Terminal(config, CommandGene.DoubleClass),
@@ -64,7 +62,7 @@ public class App extends GPProblem {
             	new Terminal(config, CommandGene.DoubleClass),
                 new Add(config, CommandGene.DoubleClass),
                 new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+                new FireTerminal(config),
             },
             {
             	new Terminal(config, CommandGene.DoubleClass),
@@ -73,7 +71,7 @@ public class App extends GPProblem {
             	new Terminal(config, CommandGene.DoubleClass),
                 new Add(config, CommandGene.DoubleClass),
                 new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+                new FireTerminal(config),
             },
             {
             	new Terminal(config, CommandGene.DoubleClass),
@@ -82,7 +80,7 @@ public class App extends GPProblem {
             	new Terminal(config, CommandGene.DoubleClass),
                 new Add(config, CommandGene.DoubleClass),
                 new Multiply(config, CommandGene.DoubleClass),
-                new Fire(config),
+                new FireTerminal(config),
             }
         };
 
