@@ -16,8 +16,13 @@ import robocode.control.events.*;
 public class MyFitnessFunction extends GPFitnessFunction {
 
 	private static final long serialVersionUID = 5616535457545157300L;
-	private static final String robotName = "ufcg.Detonator";
 	protected double fitness;
+	
+	static final String ROBOCODE_DIR = "C:/robocode";
+	static final String ROBOTS_DIR = ROBOCODE_DIR + "/robots";
+	static final String ROBOT_FILE = ROBOTS_DIR + "/ufcg/Detonator.java";
+	static final String ROBOT_NAME = "ufcg.Detonator";
+	static final String ROBOT_NAME_COMPOSED = "ufcg.Detonator*";
 
 	@Override
 	protected double evaluate(IGPProgram a_subject) {
@@ -25,71 +30,81 @@ public class MyFitnessFunction extends GPFitnessFunction {
 		final BattlefieldSpecification battlefield;
 		createRobotFromChromossome(a_subject);
 
-		engine = new RobocodeEngine(new File("C:/robocode"));
+		engine = new RobocodeEngine(new File(ROBOCODE_DIR));
 		engine.setVisible(false);
 		engine.addBattleListener(new BattleAdaptor() {
+			double sum, score;
 			public void onBattleCompleted(final BattleCompletedEvent e) {
-				double sum = 0;
 				BattleResults[] list = e.getIndexedResults();
-				for (BattleResults result : list) {
-					sum += result.getScore();
-					System.out.println("robot in battle: " + result.getTeamLeaderName());
+				assert list.length == 2;
+				
+				sum = Arrays.stream(list)
+						.mapToInt(a -> a.getScore())
+						.sum();
+				
+				for (BattleResults br: list) {
+					System.out.println(br.getTeamLeaderName());
+					if (br.getTeamLeaderName().startsWith(ROBOT_NAME))
+						score = br.getScore();
 				}
 
-				System.out.println("sum: " + sum);
-				for (BattleResults result : list) {
-					if (result.getTeamLeaderName().startsWith(robotName)) {
-						fitness = (double) result.getScore()/sum;
-						
-						System.out.println("async: " + fitness);
-					}
-				}
+				fitness = score/sum;
 			}
 		});
 		battlefield = new BattlefieldSpecification(800, 600);
-		final String robotsName = "sample.SpinBot, ufcg.Detonator*";
-		final RobotSpecification[] selectedRobots = engine.getLocalRepository(robotsName);
-		final BattleSpecification battleSpec = new BattleSpecification(10, battlefield, selectedRobots);
+		final RobotSpecification[] selectedRobots = engine.getLocalRepository(String.join(",", "sample.SpinBot", ROBOT_NAME_COMPOSED));
+		final BattleSpecification battleSpec = new BattleSpecification(15, battlefield, selectedRobots);
+		
+		System.out.println("beginning battle...");
+		
 		engine.runBattle(battleSpec, true);
 		engine.close();
-
-		System.out.println("sync: " + fitness);
+		
+		System.out.println("battle complete");
+		
+		System.out.println("fitness: " + fitness);
 		return Math.abs(fitness);
 	}
 
-	private void createRobotFromChromossome(IGPProgram a_subject) {
-		
-		String sourceCode = "package ufcg;"
-				+ "import robocode.*;"
-				+ "import java.util.*;"
-				+ "public class Detonator extends AdvancedRobot {"
-				+ "	static double enemyFirePower;"
-				+ "	public void run() {"
-				+ "  while(true) {setTurnRight(10000);"
-				+ "  setMaxVelocity(5);"
-				+ "  ahead(10000);}"
-				+ "	}"
-				+ "	public void onScannedRobot(ScannedRobotEvent e) {"
-				+ "		\n%s\n"
-				+ "	}"
-				+ "	public void onHitByBullet(HitByBulletEvent e) {"
-				+ "		\n%s\n"
-				+ "	}"
-				+ "	public void onHitWall(HitWallEvent e) {"
-				+ "		\n%s\n"
-				+ "	}"
-				+ "	public void onHitRobot(HitRobotEvent e) {"
-				+ "		\n%s\n"
-				+ "	}"
-				+ "}";
+	public static void createRobotFromChromossome(IGPProgram a_subject) {
+		System.out.println("--------------------------------");
+		System.out.println("compiling...");
+		String sourceCode = String.join("\n",
+				"package ufcg;",
+				"import robocode.*;",
+				"import java.util.*;",
+				"public class Detonator extends AdvancedRobot {",
+				"  static double enemyFirePower;",
+				"  public void run() {",
+				"    while(true) {",
+				"      setTurnRight(10000);",
+				"      setMaxVelocity(5);",
+				"      ahead(10000);",
+				"    }",
+				"  }",
+				"  public void onScannedRobot(ScannedRobotEvent e) {",
+				"    %s",
+				"  }",
+				"  public void onHitByBullet(HitByBulletEvent e) {",
+				"    %s",
+				"  }",
+				"  public void onHitWall(HitWallEvent e) {",
+				"    %s",
+				"  }",
+				"  public void onHitRobot(HitRobotEvent e) {",
+				"    %s",
+				"  }",
+				"}"
+		);
 		
 		String scannedCode = "", bulletCode = "", wallCode = "", hitCode = "";
 		
-		scannedCode = a_subject.getChromosome(0).toStringNorm(0);
-		System.out.println("codigo gerado: " + scannedCode);
+		scannedCode = a_subject.execute_object(0, new Object[]{}).toString();
+		
+		System.out.println("generated code (onScannedRobot): " + scannedCode);
 		
 		try {
-			FileWriter fstream = new FileWriter("C:/robocode/robots/ufcg/Detonator.java");
+			FileWriter fstream = new FileWriter(ROBOT_FILE);
 			BufferedWriter out = new BufferedWriter(fstream);
 			out.write(String.format(sourceCode, scannedCode, bulletCode, wallCode, hitCode));
 			out.close();
@@ -102,11 +117,11 @@ public class MyFitnessFunction extends GPFitnessFunction {
 		DiagnosticListener<JavaFileObject> diagnosticListener = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticListener, null, null);
 		
-		Iterable<String> options = Arrays.asList("-d", "C:/robocode/robots");
-		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects("C:/robocode/robots/ufcg/Detonator.java");
+		Iterable<String> options = Arrays.asList("-d", ROBOTS_DIR);
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(ROBOT_FILE);
 		
 		boolean result = compiler.getTask(null, fileManager, diagnosticListener, options, null, compilationUnits).call();
-		//Task(null, c, diagnosticListener, options, classes, compilationUnits)(null, null, null, "-cp", new File("robocode.jar").getAbsolutePath(), new File("robots/ufcg/Detonator.java").getAbsolutePath());
+		
         if (result) {
             System.out.println("compilation done");
         } else {
